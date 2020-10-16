@@ -58,11 +58,7 @@ public class NodeSyncRecord implements Comparable<NodeSyncRecord>
         long start_token = row.getLong("start_token");
         long end_token = row.getLong("end_token");
 
-        if (lastValidationUdt.getBoolean("was_incremental"))
-        {
-            return Stream.empty();
-        }
-        else if (start_token > end_token)
+        if (start_token > end_token)
         {
             // Two token ranges: the first one is from start_token to Long.MAX_VALUE, the second one is from
             // Long.MIN_VALUE to end_token
