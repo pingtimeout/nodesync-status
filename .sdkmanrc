@@ -1,0 +1,3 @@
+# Enable auto-env through the sdkman_auto_env config
+# Add key=value pairs of SDKs upperBound use below
+java=13.0.2.hs-adpt
