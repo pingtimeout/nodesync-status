@@ -1,0 +1,18 @@
+= NodSsync status checker
+
+== Build
+
+Only a JDK is required to build the tool.
+
+[source]
+----
+./mvnw package
+----
+
+== Run
+
+[source]
+----
+java -jar target/nodesync-status-1.0-SNAPSHOT-jar-with-dependencies.jar | tee nodesync-status.log
+----
+
