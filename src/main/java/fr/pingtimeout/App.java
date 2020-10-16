@@ -2,6 +2,7 @@ package fr.pingtimeout;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class App
         List<String> tables = Arrays
             .asList("xml_doc_1300", "xml_doc_1305", "xml_doc_1307", "xml_idx_1300_1", "xml_idx_1300_2",
                 "xml_idx_1300_3", "xml_idx_1300_4", "xml_idx_1300_5", "xml_idx_1301_1", "xml_idx_1305_1");
-//        tables = Arrays.asList("xml_idx_1305_1");
+//        tables = Collections.singletonList("xml_idx_1300_2");
 
         try (CqlSession session = connectToNode(host, port, dc))
         {
@@ -64,19 +65,34 @@ public class App
             //System.out.println("Current record : " + record);
             if (highestRecord.getTokenRange().intersectsWith(record.getTokenRange()))
             {
-                if(highestRecord.getLastOutcome() == record.getLastOutcome()) {
-                    //System.out.println("Intersect and match outcome");
+                if (highestRecord.getLastOutcome() <= 1 &&
+                    record.getLastOutcome() <= 1)
+                {
+                    //System.out.println("Intersect and match successful outcome");
                     tokenRangeValidationState.remove(highestRecord);
                     tokenRangeValidationState.add(highestRecord.mergeWith(record));
-                } else {
-                    if(highestRecord.getTokenRange().getLowerBound() == record.getTokenRange().getLowerBound()) {
+                }
+                else if (highestRecord.getLastOutcome() >= 2 &&
+                    record.getLastOutcome() >= 2)
+                {
+                    //System.out.println("Intersect and match unsuccessful outcome");
+                    tokenRangeValidationState.remove(highestRecord);
+                    tokenRangeValidationState.add(highestRecord.mergeWith(record));
+                }
+                else
+                {
+                    if (highestRecord.getTokenRange().getLowerBound() == record.getTokenRange().getLowerBound())
+                    {
                         //System.out.println("Intersect with different outcome starting at the same token");
                         tokenRangeValidationState.remove(highestRecord);
                         tokenRangeValidationState.add(record);
-                    } else {
+                    }
+                    else
+                    {
                         //System.out.println("Intersect with different outcome");
                         tokenRangeValidationState.remove(highestRecord);
-                        tokenRangeValidationState.add(highestRecord.withUpperBound(record.getTokenRange().getLowerBound()));
+                        tokenRangeValidationState
+                            .add(highestRecord.withUpperBound(record.getTokenRange().getLowerBound()));
                         tokenRangeValidationState.add(record);
                     }
                 }

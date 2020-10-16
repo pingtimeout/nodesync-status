@@ -1,4 +1,4 @@
-= NodSsync status checker
+= NodeSync status checker
 
 == Build
 
